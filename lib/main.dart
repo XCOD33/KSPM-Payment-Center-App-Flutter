@@ -9,6 +9,31 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return MaterialApp(
+      home: Scaffold(
+        body: Stack(
+          children: [
+            Center(
+              child: Image.asset(
+                "assets/kspm-uty-logo.png",
+                width: 159,
+                height: 159,
+              ),
+            ),
+            const Align(
+              alignment: AlignmentDirectional(0, 0.9),
+              child: Text(
+                "V1.x.x",
+                style: TextStyle(
+                  fontFamily: "Montserrat",
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
   }
 }
