@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:kspm_payment_center_app/login.dart';
+import 'package:kspm_payment_center_app/utils/colors.dart';
+import 'package:kspm_payment_center_app/utils/text_style.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,9 +14,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: LoginPage(),
+    return MaterialApp(
+      home: const LoginPage(),
       debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        scaffoldBackgroundColor: AppColors.ghostWhite,
+      ),
     );
   }
 }
@@ -48,15 +53,11 @@ class _LoginPageState extends State<LoginPage> {
               height: 159,
             ),
           ),
-          const Align(
-            alignment: AlignmentDirectional(0, 0.9),
+          Align(
+            alignment: const AlignmentDirectional(0, 0.9),
             child: Text(
               "V1.x.x",
-              style: TextStyle(
-                fontFamily: "Montserrat",
-                fontWeight: FontWeight.bold,
-                fontSize: 15,
-              ),
+              style: AppTextStyle.fontBold(15),
             ),
           )
         ],
