@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kspm_payment_center_app/nav.dart';
 import 'package:kspm_payment_center_app/utils/colors.dart';
 import 'package:kspm_payment_center_app/utils/text_style.dart';
 
@@ -59,7 +60,13 @@ class Login extends StatelessWidget {
                                       borderRadius: BorderRadius.circular(15)),
                                 ),
                               ),
-                              onPressed: null,
+                              onPressed: () {
+                                Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => Nav()),
+                                    (route) => false);
+                              },
                               child: const Text(
                                 "Login",
                                 style: TextStyle(
