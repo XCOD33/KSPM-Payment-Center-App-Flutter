@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:kspm_payment_center_app/detail_pembayaran.dart';
 import 'package:kspm_payment_center_app/utils/colors.dart';
 import 'package:kspm_payment_center_app/utils/text_style.dart';
 
@@ -77,11 +78,10 @@ class _PembayarankuState extends State<Pembayaranku> {
                   margin: EdgeInsets.only(bottom: 15),
                   child: InkWell(
                     onTap: () {
-                      Navigator.pushReplacement(
+                      Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) =>
-                              Text(pembayaranku[index]['title']!),
+                          builder: (context) => DetailPembayaran(),
                         ),
                       );
                     },
