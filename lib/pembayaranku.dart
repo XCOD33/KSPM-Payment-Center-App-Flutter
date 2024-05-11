@@ -77,7 +77,13 @@ class _PembayarankuState extends State<Pembayaranku> {
                   margin: EdgeInsets.only(bottom: 15),
                   child: InkWell(
                     onTap: () {
-                      print(pembayaranku);
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              Text(pembayaranku[index]['title']!),
+                        ),
+                      );
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(15),
