@@ -17,19 +17,11 @@ class _DetailPembayaranState extends State<DetailPembayaran> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Pembayaran : "),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () =>
-              Navigator.of(context, rootNavigator: true).pop(context),
-        ),
-      ),
       body: Padding(
         padding: EdgeInsets.only(
           left: 20,
           right: 20,
-          top: 15,
+          top: 47,
         ),
         child: Stack(
           children: [
