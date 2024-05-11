@@ -6,4 +6,5 @@ class AppColors {
   static Color jetBlack = const Color.fromARGB(255, 49, 49, 49);
   static Color lavenderMist = const Color.fromARGB(255, 238, 238, 246);
   static Color forestGreen = const Color.fromARGB(255, 16, 109, 0);
+  static Color burningOrange = const Color.fromARGB(255, 192, 46, 0);
 }
