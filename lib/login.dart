@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kspm_payment_center_app/nav.dart';
 import 'package:kspm_payment_center_app/services/api_service.dart';
-import 'package:kspm_payment_center_app/services/token_service.dart';
 import 'package:kspm_payment_center_app/utils/colors.dart';
 import 'package:kspm_payment_center_app/utils/text_style.dart';
 
@@ -21,16 +20,20 @@ class _LoginState extends State<Login> {
     final nim = _nimController.text;
     final password = _passwordController.text;
 
+    final BuildContext context = this.context;
+
     try {
       final response = await login(nim, password);
-      setState(() {
-        _message = response.message;
-      });
-      if (response.success) {
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context) => const Nav()),
-            (route) => false);
+      if (response != null) {
+        setState(() {
+          _message = response.message;
+        });
+        if (response.success) {
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => const Nav()),
+              (route) => false);
+        }
       }
     } catch (e) {
       setState(() {

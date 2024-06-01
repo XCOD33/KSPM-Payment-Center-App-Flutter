@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kspm_payment_center_app/home.dart';
 import 'package:kspm_payment_center_app/pembayaranku.dart';
+import 'package:kspm_payment_center_app/setting.dart';
 
 // void main() {
 //   runApp(const Nav());
@@ -46,7 +47,7 @@ class _NavState extends State<Nav> {
       body: <Widget>[
         Home(),
         Pembayaranku(),
-        Text("Testing"),
+        Setting(),
       ][currentPageIndex],
     );
   }

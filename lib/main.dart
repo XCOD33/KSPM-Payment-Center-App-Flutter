@@ -48,24 +48,15 @@ class _LoginPageState extends State<LoginPage> {
     if (token != null) {
       Timer(const Duration(seconds: 3), () {
         Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => const Login()));
+            context, MaterialPageRoute(builder: (context) => const Nav()));
       });
     } else {
       Timer(const Duration(seconds: 3), () {
         Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => const Nav()));
+            context, MaterialPageRoute(builder: (context) => const Login()));
       });
     }
   }
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   Timer(const Duration(seconds: 3), () {
-  //     Navigator.pushReplacement(
-  //         context, MaterialPageRoute(builder: (context) => const Login()));
-  //   });
-  // }
 
   @override
   Widget build(BuildContext context) {

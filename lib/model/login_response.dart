@@ -10,7 +10,7 @@ class LoginResponse {
   factory LoginResponse.fromJson(Map json) {
     return LoginResponse(
         success: json['success'] ?? false,
-        message: json['message'],
+        message: json['message'] ?? '',
         token: json['data'] != null ? json['data']['token'] : null,
         nama: json['data'] != null ? json['data']['nama'] : null);
   }
