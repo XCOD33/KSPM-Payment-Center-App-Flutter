@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'package:kspm_payment_center_app/model/bill_detail_response.dart';
 import 'package:kspm_payment_center_app/model/bill_response.dart';
+import 'package:kspm_payment_center_app/model/channel_response.dart';
 import 'package:kspm_payment_center_app/model/login_response.dart';
 import 'package:kspm_payment_center_app/services/http_service.dart';
 import 'package:kspm_payment_center_app/services/token_service.dart';
@@ -41,5 +43,43 @@ Future fetchBills() async {
     }
   } catch (e) {
     return BillResponse(success: false, message: 'Failed to fetch bills: $e');
+  }
+}
+
+Future<List<BillDetailResponse>> fetchBillDetails() async {
+  final tokenService = TokenService();
+  final token = await tokenService.getToken();
+
+  try {
+    final response = await getRequest('pembayaranku/bills', token);
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body)['data'];
+      return data.map((json) => BillDetailResponse.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to load bill details');
+    }
+  } catch (e) {
+    print("exception: $e");
+    throw Exception('Failed to load bill details: $e');
+  }
+}
+
+Future<List<Channel>> fetchChannels(String url) async {
+  final tokenService = TokenService();
+  final token = await tokenService.getToken();
+
+  final response = await getRequest("pembayaranku/bills/$url", token);
+  if (response.statusCode == 200) {
+    final data = jsonDecode(response.body)['data'];
+    final pembayaranUser = data['pembayaran_user'];
+    final List<dynamic> channelsJson = data['channels'];
+
+    if (pembayaranUser['status'] != 'PAID') {
+      return channelsJson.map((json) => Channel.fromJson(json)).toList();
+    } else {
+      return [];
+    }
+  } else {
+    throw Exception('Failed to load channels');
   }
 }

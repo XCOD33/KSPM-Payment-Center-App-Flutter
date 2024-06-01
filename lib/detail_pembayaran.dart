@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:kspm_payment_center_app/model/channel_response.dart';
+import 'package:kspm_payment_center_app/services/api_service.dart';
 import 'package:kspm_payment_center_app/utils/colors.dart';
 import 'package:kspm_payment_center_app/utils/text_style.dart';
 
@@ -7,13 +9,34 @@ import 'package:kspm_payment_center_app/utils/text_style.dart';
 // }
 
 class DetailPembayaran extends StatefulWidget {
-  const DetailPembayaran({super.key});
+  final String url;
+  final String name;
+  final String description;
+  final int nominal;
+  final String status;
+
+  const DetailPembayaran({
+    super.key,
+    required this.url,
+    required this.name,
+    required this.description,
+    required this.nominal,
+    required this.status,
+  });
 
   @override
   State<DetailPembayaran> createState() => _DetailPembayaranState();
 }
 
 class _DetailPembayaranState extends State<DetailPembayaran> {
+  late Future<List<dynamic>> futureChannels;
+
+  @override
+  void initState() {
+    super.initState();
+    futureChannels = fetchChannels(widget.url);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,7 +69,7 @@ class _DetailPembayaranState extends State<DetailPembayaran> {
                         title: Padding(
                           padding: EdgeInsets.only(bottom: 4),
                           child: Text(
-                            "Testing",
+                            widget.name,
                             style: AppTextStyle.fontRegular(14),
                           ),
                         ),
@@ -56,7 +79,7 @@ class _DetailPembayaranState extends State<DetailPembayaran> {
                             SizedBox(
                               height: 100,
                               child: Text(
-                                "Test Description",
+                                widget.description,
                                 style: AppTextStyle.fontRegular(12),
                               ),
                             ),
@@ -67,12 +90,14 @@ class _DetailPembayaranState extends State<DetailPembayaran> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    "Rp 10.000",
+                                    "Rp ${widget.nominal}",
                                     style:
                                         AppTextStyle.fontBoldMidnightBlue(20),
                                   ),
                                   Text(
-                                    "Lunas",
+                                    widget.status == 'active'
+                                        ? 'Lunas'
+                                        : 'Belum Lunas',
                                     style: AppTextStyle.font(18,
                                         color: AppColors.forestGreen,
                                         fw: FontWeight.w600),
@@ -98,37 +123,65 @@ class _DetailPembayaranState extends State<DetailPembayaran> {
                   ),
                 ),
                 Expanded(
-                  child: ListView.builder(
-                    itemCount: 10,
-                    itemBuilder: (context, index) {
-                      return Card(
-                        color: AppColors.lavenderMist,
-                        margin: EdgeInsets.only(bottom: index == 9 ? 100 : 15),
-                        child: ListTile(
-                          title: Text(
-                            "Rp 150.000",
-                            style: AppTextStyle.font(
-                              10,
-                              fw: FontWeight.bold,
-                              color: AppColors.jetBlack,
-                            ),
-                          ),
-                          subtitle: Text(
-                            "adm. fee : Rp 4.500",
-                            style: AppTextStyle.font(
-                              9,
-                              fw: FontWeight.normal,
-                              color: AppColors.burningOrange,
-                            ),
-                          ),
-                          leading: Icon(Icons.access_alarm_sharp),
-                          trailing: Radio(
-                            value: null,
-                            groupValue: null,
-                            onChanged: null,
-                          ),
-                        ),
-                      );
+                  child: FutureBuilder<List<Channel>>(
+                    future: futureChannels as Future<List<Channel>>?,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } else if (snapshot.hasError) {
+                        return Center(
+                          child: Text('Terjadi Kesalahan : ${snapshot.error}'),
+                        );
+                      } else if (snapshot.hasData) {
+                        final channels = snapshot.data!;
+                        if (channels.isEmpty) {
+                          return Center(
+                            child: Text('Tidak ada opsi pembayaran'),
+                          );
+                        }
+                        return ListView.builder(
+                          itemCount: channels.length,
+                          itemBuilder: (context, index) {
+                            final channel = channels[index];
+                            return Card(
+                              color: AppColors.lavenderMist,
+                              margin: EdgeInsets.only(
+                                  bottom: index == 9 ? 100 : 15),
+                              child: ListTile(
+                                title: Text(
+                                  "Rp ${channel.total.toString()}",
+                                  style: AppTextStyle.font(
+                                    10,
+                                    fw: FontWeight.bold,
+                                    color: AppColors.jetBlack,
+                                  ),
+                                ),
+                                subtitle: Text(
+                                  "adm. fee : Rp ${channel.totalFee}",
+                                  style: AppTextStyle.font(
+                                    9,
+                                    fw: FontWeight.normal,
+                                    color: AppColors.burningOrange,
+                                  ),
+                                ),
+                                leading:
+                                    Image.network(channel.iconUrl, width: 50),
+                                trailing: Radio(
+                                  value: channel.code,
+                                  groupValue: null,
+                                  onChanged: (value) {},
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      } else {
+                        return Center(
+                          child: Text('Tidak ada data'),
+                        );
+                      }
                     },
                   ),
                 ),
@@ -148,7 +201,7 @@ class _DetailPembayaranState extends State<DetailPembayaran> {
                             borderRadius: BorderRadius.circular(15)),
                       ),
                     ),
-                    onPressed: null,
+                    onPressed: () {},
                     child: Text(
                       "Bayar Tagihan",
                       style: AppTextStyle.font(16,
