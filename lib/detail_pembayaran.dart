@@ -3,6 +3,7 @@ import 'package:kspm_payment_center_app/model/channel_response.dart';
 import 'package:kspm_payment_center_app/services/api_service.dart';
 import 'package:kspm_payment_center_app/utils/colors.dart';
 import 'package:kspm_payment_center_app/utils/text_style.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 // void main() {
 //   runApp(const DetailPembayaran());
@@ -30,11 +31,51 @@ class DetailPembayaran extends StatefulWidget {
 
 class _DetailPembayaranState extends State<DetailPembayaran> {
   late Future<List<dynamic>> futureChannels;
+  String? selectedPaymentCode;
 
   @override
   void initState() {
     super.initState();
     futureChannels = fetchChannels(widget.url);
+  }
+
+  Future<void> handlePayment() async {
+    if (selectedPaymentCode != null) {
+      try {
+        final paymentResponse =
+            await processPayment(widget.url, selectedPaymentCode!);
+
+        print(paymentResponse.data.checkoutUrl);
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => Scaffold(
+                    appBar: AppBar(
+                      title: Text('Pembayaran'),
+                    ),
+                    body: WebViewWidget(
+                      controller: WebViewController()
+                        ..setJavaScriptMode(JavaScriptMode.unrestricted)
+                        ..loadRequest(
+                          Uri.parse(paymentResponse.data.checkoutUrl),
+                        ),
+                    ),
+                  )),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Terjadi kesalahan: $e'),
+          ),
+        );
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Pilih opsi pembayaran terlebih dahulu'),
+        ),
+      );
+    }
   }
 
   @override
@@ -148,7 +189,8 @@ class _DetailPembayaranState extends State<DetailPembayaran> {
                             return Card(
                               color: AppColors.lavenderMist,
                               margin: EdgeInsets.only(
-                                  bottom: index == 9 ? 100 : 15),
+                                  bottom:
+                                      index == channels.length - 1 ? 100 : 15),
                               child: ListTile(
                                 title: Text(
                                   "Rp ${channel.total.toString()}",
@@ -170,8 +212,12 @@ class _DetailPembayaranState extends State<DetailPembayaran> {
                                     Image.network(channel.iconUrl, width: 50),
                                 trailing: Radio(
                                   value: channel.code,
-                                  groupValue: null,
-                                  onChanged: (value) {},
+                                  groupValue: selectedPaymentCode,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      selectedPaymentCode = value as String;
+                                    });
+                                  },
                                 ),
                               ),
                             );
@@ -201,7 +247,7 @@ class _DetailPembayaranState extends State<DetailPembayaran> {
                             borderRadius: BorderRadius.circular(15)),
                       ),
                     ),
-                    onPressed: () {},
+                    onPressed: handlePayment,
                     child: Text(
                       "Bayar Tagihan",
                       style: AppTextStyle.font(16,

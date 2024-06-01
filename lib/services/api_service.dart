@@ -5,6 +5,7 @@ import 'package:kspm_payment_center_app/model/channel_response.dart';
 import 'package:kspm_payment_center_app/model/login_response.dart';
 import 'package:kspm_payment_center_app/services/http_service.dart';
 import 'package:kspm_payment_center_app/services/token_service.dart';
+import 'package:kspm_payment_center_app/model/payment_response.dart';
 
 Future login(String nim, String password) async {
   try {
@@ -81,5 +82,20 @@ Future<List<Channel>> fetchChannels(String url) async {
     }
   } else {
     throw Exception('Failed to load channels');
+  }
+}
+
+Future<PaymentResponse> processPayment(String url, String paymentCode) async {
+  final tokenService = TokenService();
+  final token = await tokenService.getToken();
+
+  final response = await postRequest(
+      'pembayaranku/bills/$url/pay', {'payment_code': paymentCode},
+      token: token);
+
+  if (response.statusCode == 200) {
+    return PaymentResponse.fromJson(jsonDecode(response.body));
+  } else {
+    throw Exception('Failed to process payment');
   }
 }
