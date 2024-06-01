@@ -1,10 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:kspm_payment_center_app/nav.dart';
+import 'package:kspm_payment_center_app/services/api_service.dart';
 import 'package:kspm_payment_center_app/utils/colors.dart';
 import 'package:kspm_payment_center_app/utils/text_style.dart';
+import 'package:logger/logger.dart';
 
-class Login extends StatelessWidget {
+class Login extends StatefulWidget {
   const Login({super.key});
+
+  @override
+  State<Login> createState() => _LoginState();
+}
+
+class _LoginState extends State<Login> {
+  final TextEditingController _nimController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  String? _message;
+
+  Future _login() async {
+    final logger = Logger(level: Level.all);
+    final nim = _nimController.text;
+    final password = _passwordController.text;
+
+    try {
+      final response = await login(nim, password);
+      setState(() {
+        _message = response.message;
+      });
+      if (response.success) {
+        logger.d('Token: ${response.token}');
+        logger.d('Nama: ${response.nama}');
+      }
+    } catch (e) {
+      setState(() {
+        _message = 'Terjadi kesalahan: $e';
+        // logging
+        logger.e('Terjadi kesalahan: $e');
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,12 +67,14 @@ class Login extends StatelessWidget {
                 child: Column(
                   children: [
                     TextFormField(
+                      controller: _nimController,
                       decoration: const InputDecoration(
                         border: UnderlineInputBorder(),
                         labelText: "Masukkan NIM",
                       ),
                     ),
                     TextFormField(
+                      controller: _passwordController,
                       decoration: const InputDecoration(
                         border: UnderlineInputBorder(),
                         labelText: "Masukkan Password",
@@ -48,6 +84,14 @@ class Login extends StatelessWidget {
                       margin: const EdgeInsets.only(top: 32),
                       child: Column(
                         children: [
+                          if (_message != null) ...[
+                            SizedBox(
+                              height: 20,
+                              child: Text(
+                                _message!,
+                              ),
+                            )
+                          ],
                           SizedBox(
                             width: double.infinity,
                             height: 45,
@@ -60,13 +104,14 @@ class Login extends StatelessWidget {
                                       borderRadius: BorderRadius.circular(15)),
                                 ),
                               ),
-                              onPressed: () {
-                                Navigator.pushAndRemoveUntil(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => Nav()),
-                                    (route) => false);
-                              },
+                              // onPressed: () {
+                              //   Navigator.pushAndRemoveUntil(
+                              //       context,
+                              //       MaterialPageRoute(
+                              //           builder: (context) => const Nav()),
+                              //       (route) => false);
+                              // },
+                              onPressed: _login,
                               child: const Text(
                                 "Login",
                                 style: TextStyle(
