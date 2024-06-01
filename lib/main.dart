@@ -2,10 +2,13 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:kspm_payment_center_app/login.dart';
+import 'package:kspm_payment_center_app/nav.dart';
+import 'package:kspm_payment_center_app/services/token_service.dart';
 import 'package:kspm_payment_center_app/utils/colors.dart';
 import 'package:kspm_payment_center_app/utils/text_style.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
@@ -32,14 +35,37 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final TokenService _tokenService = TokenService();
+
   @override
   void initState() {
     super.initState();
-    Timer(const Duration(seconds: 3), () {
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => const Login()));
-    });
+    _checkToken();
   }
+
+  Future _checkToken() async {
+    final token = await _tokenService.getToken();
+    if (token != null) {
+      Timer(const Duration(seconds: 3), () {
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => const Login()));
+      });
+    } else {
+      Timer(const Duration(seconds: 3), () {
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => const Nav()));
+      });
+    }
+  }
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   Timer(const Duration(seconds: 3), () {
+  //     Navigator.pushReplacement(
+  //         context, MaterialPageRoute(builder: (context) => const Login()));
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:kspm_payment_center_app/nav.dart';
 import 'package:kspm_payment_center_app/services/api_service.dart';
+import 'package:kspm_payment_center_app/services/token_service.dart';
 import 'package:kspm_payment_center_app/utils/colors.dart';
 import 'package:kspm_payment_center_app/utils/text_style.dart';
-import 'package:logger/logger.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -18,7 +18,6 @@ class _LoginState extends State<Login> {
   String? _message;
 
   Future _login() async {
-    final logger = Logger(level: Level.all);
     final nim = _nimController.text;
     final password = _passwordController.text;
 
@@ -28,14 +27,16 @@ class _LoginState extends State<Login> {
         _message = response.message;
       });
       if (response.success) {
-        logger.d('Token: ${response.token}');
-        logger.d('Nama: ${response.nama}');
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => const Nav()),
+            (route) => false);
       }
     } catch (e) {
       setState(() {
         _message = 'Terjadi kesalahan: $e';
-        // logging
-        logger.e('Terjadi kesalahan: $e');
+        // ignore: avoid_print
+        print('Terjadi kesalahan: $e');
       });
     }
   }
@@ -104,13 +105,6 @@ class _LoginState extends State<Login> {
                                       borderRadius: BorderRadius.circular(15)),
                                 ),
                               ),
-                              // onPressed: () {
-                              //   Navigator.pushAndRemoveUntil(
-                              //       context,
-                              //       MaterialPageRoute(
-                              //           builder: (context) => const Nav()),
-                              //       (route) => false);
-                              // },
                               onPressed: _login,
                               child: const Text(
                                 "Login",
