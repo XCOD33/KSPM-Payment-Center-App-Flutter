@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kspm_payment_center_app/model/channel_response.dart';
 import 'package:kspm_payment_center_app/services/api_service.dart';
 import 'package:kspm_payment_center_app/utils/colors.dart';
+import 'package:kspm_payment_center_app/utils/format_num.dart';
 import 'package:kspm_payment_center_app/utils/text_style.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -131,16 +132,16 @@ class _DetailPembayaranState extends State<DetailPembayaran> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    "Rp ${widget.nominal}",
+                                    formatCurrency(widget.nominal),
                                     style:
                                         AppTextStyle.fontBoldMidnightBlue(20),
                                   ),
                                   Text(
-                                    widget.status == 'active'
-                                        ? 'Lunas'
-                                        : 'Belum Lunas',
+                                    widget.status,
                                     style: AppTextStyle.font(18,
-                                        color: AppColors.forestGreen,
+                                        color: widget.status == 'PAID'
+                                            ? AppColors.forestGreen
+                                            : AppColors.burningOrange,
                                         fw: FontWeight.w600),
                                   ),
                                 ],

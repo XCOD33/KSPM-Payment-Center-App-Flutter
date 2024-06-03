@@ -42,9 +42,9 @@ class BillDetailResponse {
       uuid: json['uuid'],
       paymentMethod: json['payment_method'],
       paymentMethodCode: json['payment_method_code'],
-      totalFee: json['total_fee'],
-      subtotal: json['subtotal'],
-      total: json['total'],
+      totalFee: json['total_fee'] ?? 0,
+      subtotal: json['subtotal'] ?? 0,
+      total: json['total'] ?? 0,
       status: json['status'], // Parsing status
       createdAt: json['created_at'],
       updatedAt: json['updated_at'],

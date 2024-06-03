@@ -3,6 +3,7 @@ import 'package:kspm_payment_center_app/detail_pembayaran.dart';
 import 'package:kspm_payment_center_app/model/bill_detail_response.dart';
 import 'package:kspm_payment_center_app/services/api_service.dart';
 import 'package:kspm_payment_center_app/utils/colors.dart';
+import 'package:kspm_payment_center_app/utils/format_num.dart';
 import 'package:kspm_payment_center_app/utils/text_style.dart';
 
 // void main() {
@@ -110,7 +111,8 @@ class _PembayarankuState extends State<Pembayaranku> {
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
-                                          'Rp ${billDetail.pembayaran.nominal}',
+                                          formatCurrency(
+                                              billDetail.pembayaran.nominal),
                                           style:
                                               AppTextStyle.fontBoldMidnightBlue(
                                                   20),
