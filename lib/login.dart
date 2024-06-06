@@ -3,6 +3,7 @@ import 'package:kspm_payment_center_app/nav.dart';
 import 'package:kspm_payment_center_app/services/api_service.dart';
 import 'package:kspm_payment_center_app/utils/colors.dart';
 import 'package:kspm_payment_center_app/utils/text_style.dart';
+import 'package:kspm_payment_center_app/utils/toast.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -14,7 +15,6 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   final TextEditingController _nimController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  String? _message;
 
   Future _login() async {
     final nim = _nimController.text;
@@ -26,9 +26,11 @@ class _LoginState extends State<Login> {
       final response = await login(nim, password);
       if (response != null) {
         setState(() {
-          _message = response.message;
+          // _message = response.message;
+          ToastUtil.showFailedToast(response.message);
         });
         if (response.success) {
+          ToastUtil.showSuccessToast("Login Berhasil");
           Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(builder: (context) => const Nav()),
@@ -37,9 +39,7 @@ class _LoginState extends State<Login> {
       }
     } catch (e) {
       setState(() {
-        _message = 'Terjadi kesalahan: $e';
-        // ignore: avoid_print
-        print('Terjadi kesalahan: $e');
+        ToastUtil.showFailedToast("Terjadi kesalahan: $e");
       });
     }
   }
@@ -88,14 +88,6 @@ class _LoginState extends State<Login> {
                       margin: const EdgeInsets.only(top: 32),
                       child: Column(
                         children: [
-                          if (_message != null) ...[
-                            SizedBox(
-                              height: 20,
-                              child: Text(
-                                _message!,
-                              ),
-                            )
-                          ],
                           SizedBox(
                             width: double.infinity,
                             height: 45,
