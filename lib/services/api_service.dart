@@ -56,6 +56,7 @@ Future<List<BillDetailResponse>> fetchBillDetails() async {
     final response = await getRequest('pembayaranku/bills', token);
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body)['data'];
+
       return data.map((json) => BillDetailResponse.fromJson(json)).toList();
     } else {
       throw Exception('Failed to load bill details');

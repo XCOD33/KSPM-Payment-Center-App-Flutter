@@ -12,7 +12,7 @@ Future postRequest(String url, Map body, {String? token}) async {
   }
 
   final response = await http.post(
-      Uri.parse('http://192.168.1.250:8000/api/$url'),
+      Uri.parse('https://dev.kspmuty.com/api/$url'),
       headers: headers,
       body: jsonEncode(body));
 
@@ -21,7 +21,7 @@ Future postRequest(String url, Map body, {String? token}) async {
 
 Future getRequest(String url, String token) async {
   final response = await http.get(
-    Uri.parse('http://192.168.1.250:8000/api/$url'),
+    Uri.parse('https://dev.kspmuty.com/api/$url'),
     headers: {
       'Content-Type': 'application/json; charset=UTF-8',
       'Authorization': 'Bearer $token',
