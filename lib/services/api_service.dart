@@ -3,6 +3,7 @@ import 'package:kspm_payment_center_app/model/bill_detail_response.dart';
 import 'package:kspm_payment_center_app/model/bill_response.dart';
 import 'package:kspm_payment_center_app/model/channel_response.dart';
 import 'package:kspm_payment_center_app/model/login_response.dart';
+import 'package:kspm_payment_center_app/model/user_detail_response.dart';
 import 'package:kspm_payment_center_app/services/http_service.dart';
 import 'package:kspm_payment_center_app/services/token_service.dart';
 import 'package:kspm_payment_center_app/model/payment_response.dart';
@@ -97,5 +98,19 @@ Future<PaymentResponse> processPayment(String url, String paymentCode) async {
     return PaymentResponse.fromJson(jsonDecode(response.body));
   } else {
     throw Exception('Failed to process payment');
+  }
+}
+
+Future<UserDetail> fetchUserDetails() async {
+  final tokenService = TokenService();
+  final token = await tokenService.getToken();
+
+  final response = await getRequest('users/detail', token);
+
+  if (response.statusCode == 200) {
+    final data = jsonDecode(response.body)['data'];
+    return UserDetail.fromJson(data);
+  } else {
+    throw Exception('Failed to load user details');
   }
 }

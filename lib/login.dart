@@ -25,16 +25,14 @@ class _LoginState extends State<Login> {
     try {
       final response = await login(nim, password);
       if (response != null) {
-        setState(() {
-          // _message = response.message;
-          ToastUtil.showFailedToast(response.message);
-        });
         if (response.success) {
           ToastUtil.showSuccessToast("Login Berhasil");
           Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(builder: (context) => const Nav()),
               (route) => false);
+        } else {
+          ToastUtil.showFailedToast(response.message);
         }
       }
     } catch (e) {
