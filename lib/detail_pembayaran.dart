@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:kspm_payment_center_app/model/channel_response.dart';
+import 'package:kspm_payment_center_app/payment_receipt.dart';
 import 'package:kspm_payment_center_app/services/api_service.dart';
 import 'package:kspm_payment_center_app/utils/colors.dart';
 import 'package:kspm_payment_center_app/utils/format_num.dart';
@@ -38,6 +40,22 @@ class _DetailPembayaranState extends State<DetailPembayaran> {
   void initState() {
     super.initState();
     futureChannels = fetchChannels(widget.url);
+
+    if (widget.status == 'PAID') {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PaymentReceipt(
+                name: widget.name,
+                description: widget.description,
+                nominal: widget.nominal,
+                status: 'PAID',
+                receiptUrl: widget.url),
+          ),
+        );
+      });
+    }
   }
 
   Future<void> handlePayment() async {
@@ -46,22 +64,22 @@ class _DetailPembayaranState extends State<DetailPembayaran> {
         final paymentResponse =
             await processPayment(widget.url, selectedPaymentCode!);
 
-        print(paymentResponse.data.checkoutUrl);
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-              builder: (context) => Scaffold(
-                    appBar: AppBar(
-                      title: Text('Pembayaran'),
-                    ),
-                    body: WebViewWidget(
-                      controller: WebViewController()
-                        ..setJavaScriptMode(JavaScriptMode.unrestricted)
-                        ..loadRequest(
-                          Uri.parse(paymentResponse.data.checkoutUrl),
-                        ),
-                    ),
-                  )),
+            builder: (context) => Scaffold(
+              appBar: AppBar(
+                title: const Text('Pembayaran'),
+              ),
+              body: WebViewWidget(
+                controller: WebViewController()
+                  ..setJavaScriptMode(JavaScriptMode.unrestricted)
+                  ..loadRequest(
+                    Uri.parse(paymentResponse.data.checkoutUrl),
+                  ),
+              ),
+            ),
+          ),
         );
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -72,7 +90,7 @@ class _DetailPembayaranState extends State<DetailPembayaran> {
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Pilih opsi pembayaran terlebih dahulu'),
         ),
       );
@@ -83,7 +101,7 @@ class _DetailPembayaranState extends State<DetailPembayaran> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: EdgeInsets.only(
+        padding: const EdgeInsets.only(
           left: 20,
           right: 20,
           top: 47,
@@ -95,13 +113,13 @@ class _DetailPembayaranState extends State<DetailPembayaran> {
               children: [
                 Card(
                   color: AppColors.lavenderMist,
-                  margin: EdgeInsets.only(bottom: 15),
+                  margin: const EdgeInsets.only(bottom: 15),
                   child: InkWell(
                     onTap: () {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => Text("Pembayaranku"),
+                          builder: (context) => const Text("Pembayaranku"),
                         ),
                       );
                     },
@@ -109,7 +127,7 @@ class _DetailPembayaranState extends State<DetailPembayaran> {
                       padding: const EdgeInsets.all(15),
                       child: ListTile(
                         title: Padding(
-                          padding: EdgeInsets.only(bottom: 4),
+                          padding: const EdgeInsets.only(bottom: 4),
                           child: Text(
                             widget.name,
                             style: AppTextStyle.fontRegular(14),
@@ -169,7 +187,7 @@ class _DetailPembayaranState extends State<DetailPembayaran> {
                     future: futureChannels as Future<List<Channel>>?,
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(
+                        return const Center(
                           child: CircularProgressIndicator(),
                         );
                       } else if (snapshot.hasError) {
@@ -179,7 +197,7 @@ class _DetailPembayaranState extends State<DetailPembayaran> {
                       } else if (snapshot.hasData) {
                         final channels = snapshot.data!;
                         if (channels.isEmpty) {
-                          return Center(
+                          return const Center(
                             child: Text('Tidak ada opsi pembayaran'),
                           );
                         }
@@ -225,7 +243,7 @@ class _DetailPembayaranState extends State<DetailPembayaran> {
                           },
                         );
                       } else {
-                        return Center(
+                        return const Center(
                           child: Text('Tidak ada data'),
                         );
                       }
@@ -235,7 +253,7 @@ class _DetailPembayaranState extends State<DetailPembayaran> {
               ],
             ),
             Align(
-              alignment: Alignment(0, 0.95),
+              alignment: const Alignment(0, 0.95),
               child: SizedBox(
                 width: double.infinity,
                 height: 50,
