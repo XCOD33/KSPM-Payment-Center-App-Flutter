@@ -15,6 +15,7 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   final TextEditingController _nimController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool _passwordVisible = false;
 
   Future _login() async {
     final nim = _nimController.text;
@@ -77,9 +78,22 @@ class _LoginState extends State<Login> {
                     ),
                     TextFormField(
                       controller: _passwordController,
-                      decoration: const InputDecoration(
-                        border: UnderlineInputBorder(),
+                      obscureText: !_passwordVisible,
+                      enableSuggestions: false,
+                      autocorrect: false,
+                      decoration: InputDecoration(
+                        border: const UnderlineInputBorder(),
                         labelText: "Masukkan Password",
+                        suffixIcon: IconButton(
+                          onPressed: () {
+                            setState(() {
+                              _passwordVisible = !_passwordVisible;
+                            });
+                          },
+                          icon: Icon(_passwordVisible
+                              ? Icons.visibility
+                              : Icons.visibility_off),
+                        ),
                       ),
                     ),
                     Container(
